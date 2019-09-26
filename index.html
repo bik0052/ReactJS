@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Assignment Two</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="src/css/stylesheet.css">
+  </head>
+  <body class="container">
+	  <header class="p-3 mb-2 bg-dark text-white">
+      <p>Assignment Two</p>
+    </header>
+
+    <h1>User Interface with Reactjs</h1>
+    <div id="standardDeviation"></div>
+    <div id="linearRegression"></div>
+
+    <script type="text/babel">
+      class StandardDeviationCom extends React.Component {
+        constructor (props) {
+          super(props)
+          this.state = {result: ''}
+
+          this.onFileChange = this.onFileChange.bind(this)
+          this.parseData = this.parseData.bind(this)
+          this.reset = this.reset.bind(this)
+        }
+
+        onFileChange (event) {
+          Reader.getFiles(event,this)
+        }
+
+        parseData(data){
+          let xNumbers = data.split('\n')
+          let intXNumbers = []
+          for(let aNum of xNumbers){
+            let intANum = parseInt(aNum)
+            if(!isNaN(intANum)){
+              intXNumbers.push(intANum)
+            }
+          }
+          this.init(intXNumbers)
+        }
+
+        init(xNumbers){
+          let stdDev = new StandardDeviation(xNumbers).init()
+          this.setState({result:stdDev})
+        }
+
+        reset () {
+          this.setState({result: ''})
+        }
+
+        render () {
+          return (
+            <div>
+              {!this.state.result ? (
+                <div>
+                  <h2>Calculate the Mean and Standard Deviation</h2>
+                  <p>Select a file of numbers with single column</p>
+                  <input className="btn btn-outline-secondary" type='file' onChange={this.onFileChange} />
+                  <hr />
+                </div>
+              ) : (
+                <div class="text-secondary" >
+                  <h2>Calculate the Mean and Standard Deviation</h2>
+                  <p><strong><em>The Mean:</em></strong> {this.state.result.xAverage}</p>
+                  <p><strong><em>The Standard Devitation:</em></strong> {this.state.result.standardDeviation}</p>
+                  <button className="btn btn-outline-secondary" onClick={this.reset}>Reset</button>
+                  <hr />
+                </div>
+              )}
+            </div>
+          )
+        }
+      }
+
+      ReactDOM.render(
+        <StandardDeviationCom />,
+        document.getElementById('standardDeviation')
+      );
+    
+      class LinearRegressionCom extends React.Component {
+        constructor (props) {
+          super(props)
+          this.state = {result: ''}
+          this.onFileChange = this.onFileChange.bind(this)
+          this.parseData = this.parseData.bind(this)
+          this.reset = this.reset.bind(this)
+        }
+
+        onFileChange (event) {
+          Reader.getFiles(event,this)
+        }
+
+        parseData(data){
+          let xNumbers = []
+          let yNumbers = []
+          let allData = data.split('\n')
+          for(let aLine of allData){
+            if(aLine.split(',').length < 2){
+              continue
+            }
+            let intX = parseInt(aLine.split(',')[0])
+            let intY = parseInt(aLine.split(',')[1])
+
+            if(!isNaN(intX) && !isNaN(intY) ){
+              xNumbers.push(intX)
+              yNumbers.push(intY)
+            }
+          }
+          this.init(xNumbers,yNumbers)
+        }
+
+        init(xNumbers,yNumbers){
+          let stdDev = new LinearRegression(xNumbers,yNumbers).init()
+          this.setState({result:stdDev})
+        }
+        reset () {
+          this.setState({result: ''})
+        }
+        render () {
+          return (
+            <div>
+              {!this.state.result ? (
+                <div>
+                  <h2>Calculate Linear Regression</h2>
+                  <p>Select a file of numbers with single column</p>
+                  <input className="btn btn-outline-secondary" type='file' onChange={this.onFileChange} />
+                  <hr />
+                </div>
+              ) : (
+                <div class="text-secondary">
+                  <h2>Calculate Linear Regression</h2>
+                  <p><strong><em>Beta0:</em></strong> {this.state.result.beta0}</p>
+                  <p><strong><em>Beta1:</em></strong> {this.state.result.beta1}</p>
+                  <button className="btn btn-outline-secondary" onClick={this.reset}>Reset</button>
+                  <hr />
+                </div>
+              )}
+            </div>
+          )
+        }
+      }
+      ReactDOM.render(
+        <LinearRegressionCom />,
+        document.getElementById('linearRegression')
+      );
+    </script>
+    <script type="text/javascript" src="src/Reader.js"></script>
+    <script type="text/javascript" src="src/StandardDeviation.js"></script>
+    <script type="text/javascript" src="src/LinearRegression.js"></script>
+  </body>
+</html>
